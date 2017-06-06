@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link href="css/settings.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript">
+	
+	function init()
+	{
+		readSettings();
+		System.Gadget.onSettingsClosing = closeSettingsHandler; 
+	}
+	
+	function closeSettingsHandler(event) 
+	{
+		if (event.closeAction == event.Action.commit) 
+		{
+			saveSettings();
+		}
+	}
+	
+	function readSettings()
+	{
+		var net			= System.Gadget.Settings.readString("bn_net_str");
+		var login 		= System.Gadget.Settings.readString("bn_login_str");
+    	var passwd 		= System.Gadget.Settings.readString("bn_passwd_str");
+		var minsum 		= System.Gadget.Settings.readString("bn_minsum_str");
+		var updatetime	= System.Gadget.Settings.readString("bn_update_str");
+		
+		bn_login.value 		= login;
+		bn_password.value 	= passwd;
+		bn_minsum.value		= (minsum == "") ? "110000" : minsum;
+		
+		if (net != "")
+		{
+			setListItem(bn_net, net);
+		}
+		
+		if (updatetime != "")
+		{
+			setListItem(bn_update, updatetime);
+		}
+		
+	}
+	
+	function saveSettings()
+	{
+		var net 		= getListItem(bn_net);
+		var login 		= bn_login.value;
+    	var passwd 		= bn_password.value;
+		var minsum		= bn_minsum.value;
+		var updatetime	= getListItem(bn_update);
+		
+		System.Gadget.Settings.writeString("bn_net_str", net);
+		System.Gadget.Settings.writeString("bn_login_str", login);
+		System.Gadget.Settings.writeString("bn_passwd_str", passwd);
+		System.Gadget.Settings.writeString("bn_minsum_str", minsum);
+		System.Gadget.Settings.writeString("bn_update_str", updatetime);
+	}
+	
+	function getListItem(list_name)
+	{
+		var dropdown = list_name;
+		return dropdown[dropdown.selectedIndex].value;
+	}
+	
+	function setListItem(list_name, update_data)
+	{
+		var dropdown = list_name;
+		
+		for(var i=0; i<=dropdown.length; i++)
+		{
+			if(update_data == dropdown[i].value)
+			{
+				dropdown[i].selected = true;
+				break;
+			}
+		}
+	}
+
+</script>
+
+</head>
+
+<body onload="init()">
+
+<table width="100%">
+	<tr>
+    	<td width="100">Тариф: </td>
+        <td>
+        	<select name="bn_net">
+              <option value="idom">Idom</option>
+              <option value="smlnight">Sml Night</option>
+            </select>
+        </td>
+    </tr>
+</table>
+
+<hr />
+
+<table width="100%">
+	<tr>
+    	<td width="100">Логин: </td>
+        <td><input name="bn_login" type="text" /></td>
+    </tr>
+    <tr>
+    	<td>Пароль: </td>
+        <td><input name="bn_password" type="password" /></td>
+    </tr>
+</table>
+
+<hr />
+
+<table width="100%">
+	<tr>
+    	<td width="100">Минимальная сумма: </td>
+        <td><input name="bn_minsum" type="text" value="110000" /></td>
+    </tr>
+</table>
+
+<hr />
+
+<table>
+    <tr>
+    	<td width="100">Обновление </td>
+        <td>
+            <select name="bn_update">
+              <option value="3600">каждый час</option>
+              <option value="21600">каждые 6 часов</option>
+              <option value="43200">каждые 12 часов</option>
+              <option value="86400">каждые 24 часа</option>
+            </select>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

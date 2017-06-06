@@ -1,0 +1,25 @@
+body {
+	width:250px;
+	height:200px;
+	margin:0;
+	
+	font-family:Tahoma, Geneva, sans-serif;
+	font-size: 12px;
+}
+
+input {
+	width: 150px;
+}
+
+select {
+	width:155px;
+}
+
+.chb {
+	width: 20px;
+}
+
+hr {
+	height: 1px;
+	color: #cccccc;
+}

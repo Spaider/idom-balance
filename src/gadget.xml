@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<gadget>
+
+<name>My Balance</name>
+
+<version>0.1</version>
+
+<author name="Pavel Liber">
+<info url="" />
+<logo src="img/bn_ico.png" />
+</author>
+
+<copyright>&#169; 2009</copyright>
+
+<description>
+Balance Checker for Idom and SML Night
+</description>
+	
+<icons>
+<icon src="img/bn_ico.png" width="64" height="64" />
+</icons>
+
+<hosts>
+<host name="sidebar">
+<base type="HTML" apiVersion="1.0.0" src="index.html" />
+<permissions>full</permissions>
+<platform minPlatformVersion="1.0" />
+</host>
+</hosts>
+
+</gadget>
