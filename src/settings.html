@@ -6,21 +6,21 @@
 <link href="css/settings.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript">
-	
+
 	function init()
 	{
 		readSettings();
-		System.Gadget.onSettingsClosing = closeSettingsHandler; 
+		System.Gadget.onSettingsClosing = closeSettingsHandler;
 	}
-	
-	function closeSettingsHandler(event) 
+
+	function closeSettingsHandler(event)
 	{
-		if (event.closeAction == event.Action.commit) 
+		if (event.closeAction == event.Action.commit)
 		{
 			saveSettings();
 		}
 	}
-	
+
 	function readSettings()
 	{
 		var net			= System.Gadget.Settings.readString("bn_net_str");
@@ -28,23 +28,23 @@
     	var passwd 		= System.Gadget.Settings.readString("bn_passwd_str");
 		var minsum 		= System.Gadget.Settings.readString("bn_minsum_str");
 		var updatetime	= System.Gadget.Settings.readString("bn_update_str");
-		
+
 		bn_login.value 		= login;
 		bn_password.value 	= passwd;
-		bn_minsum.value		= (minsum == "") ? "110000" : minsum;
-		
+		bn_minsum.value		= (minsum == "") ? "5,00" : minsum;
+
 		if (net != "")
 		{
 			setListItem(bn_net, net);
 		}
-		
+
 		if (updatetime != "")
 		{
 			setListItem(bn_update, updatetime);
 		}
-		
+
 	}
-	
+
 	function saveSettings()
 	{
 		var net 		= getListItem(bn_net);
@@ -52,24 +52,24 @@
     	var passwd 		= bn_password.value;
 		var minsum		= bn_minsum.value;
 		var updatetime	= getListItem(bn_update);
-		
+
 		System.Gadget.Settings.writeString("bn_net_str", net);
 		System.Gadget.Settings.writeString("bn_login_str", login);
 		System.Gadget.Settings.writeString("bn_passwd_str", passwd);
 		System.Gadget.Settings.writeString("bn_minsum_str", minsum);
 		System.Gadget.Settings.writeString("bn_update_str", updatetime);
 	}
-	
+
 	function getListItem(list_name)
 	{
 		var dropdown = list_name;
 		return dropdown[dropdown.selectedIndex].value;
 	}
-	
+
 	function setListItem(list_name, update_data)
 	{
 		var dropdown = list_name;
-		
+
 		for(var i=0; i<=dropdown.length; i++)
 		{
 			if(update_data == dropdown[i].value)
@@ -116,7 +116,7 @@
 <table width="100%">
 	<tr>
     	<td width="100">Минимальная сумма: </td>
-        <td><input name="bn_minsum" type="text" value="110000" /></td>
+        <td><input name="bn_minsum" type="text" value="5,00" /></td>
     </tr>
 </table>
 

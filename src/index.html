@@ -6,117 +6,106 @@
 <link href="css/main.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript" language="javascript">
-	
+
 	var http_request = false;
 	var call_interval;
 	var net_settings = {};
-	
-	var MINIMAL_BALANCE 	= 110000;
+
+	var MINIMAL_BALANCE 	= 5;
 	var UPDATE_TIME 		= 3600;
 	var LOGIN		 		= "";
 	var PASSWD		 		= "";
 	var NET		 			= "idom";
-	
-	function makePOSTRequest(url, parameters) 
+
+	function makePOSTRequest(url, parameters)
 	{
-	  
 		http_request = new ActiveXObject("Msxml2.XMLHTTP");
-		
-		if (!http_request) 
+
+		if (!http_request)
 		{
 			alert('Cannot create XMLHTTP instance');
 			return false;
 		}
-		
+
 		http_request.onreadystatechange = httpResponceHandler;
-		
+
 		http_request.open('POST', url, true);
 		http_request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		http_request.setRequestHeader("Content-length", parameters.length);
 		http_request.setRequestHeader("Connection", "close");
 		http_request.send(parameters);
 	}
-	
+
 	function httpResponceHandler()
 	{
-		if (http_request.readyState === 4) 
+		if (http_request.readyState === 4)
 		{
-			if (http_request.status === 200) 
+			if (http_request.status === 200)
 			{
 				var result = http_request.responseText;
 				parseData(result);
-				
+
 				call_interval = setInterval("delayedCallToIdom()", UPDATE_TIME * 1000);
-				
-			} else 
+
+			} else
 			{
 				showConnectionStatus();
 				call_interval = setInterval("delayedCallToIdom()", 30 * 1000);
 			}
-		} 
+		}
 	}
-	
+
 	function setIdomIcon(icon_color)
 	{
 		document.getElementById('icoContent').innerHTML = "<img src='img/flower_" + icon_color + ".png' />";
 	}
-	
+
 	function setIdomText(text_str)
 	{
 		document.getElementById('textContent').innerHTML = text_str;
 	}
-	
+
 	function showConnectionStatus()
 	{
 		setIdomIcon("red");
 		setIdomText("loading...");
 	}
-	
+
  	function parseData(data)
 	{
-		
 		// get balance string value with RegExp
-		var re = new RegExp(net_settings.regexp); 
+		var re = new RegExp(net_settings.regexp);
 		var balance_str = data.match(re, http_request.responseText)[1];
-		
-		if (balance_str.indexOf('.') > -1)
-		{
-			balance_str = balance_str.substring(0, balance_str.indexOf('.'));
-		}
-		
-		var balance_int = balance_str.split(' ').join('');
-		
-		// add fixed zero numbers after point
-		balance_str += ",00";
-		
+
 		// convert balance string value to Number
-		var balance = parseInt(balance_int);
-		
+		var balance = parseFloat(balance_str.replace(",", "."));
+
 		// check if balance  less than needed and show green or orange ico
 		if (balance > MINIMAL_BALANCE)
 		{
 			setIdomIcon("green");
-		} else 
+		}
+		else
 		{
 			setIdomIcon("orange");
 		}
-		
+
 		// show balance
-		setIdomText(balance_str);
+		setIdomText(Math.round(balance * 100) / 100);
 	}
-	
+
 	function applyNetSettings()
 	{
 		net_settings = {};
-		
+
 		if (NET == "idom")
 		{
 			net_settings.url = "https://ui.bn.by/index.php?locale=ru";
 			net_settings.login = "login";
 			net_settings.passwd = "passwd";
-			net_settings.regexp = "Текущий баланс:\</td\>\<td\>(.*),.* руб.";
+			net_settings.regexp = "Текущий баланс:\</td\>\<td\>(.*) руб.";
 		}
-		
+
 		if (NET == "smlnight")
 		{
 			net_settings.url = "http://night.sml.by/index.php?locale=ru";
@@ -124,67 +113,68 @@
 			net_settings.passwd = "passwd";
 			net_settings.regexp = "\<STRONG\>Бюджет:\<\/STRONG\>\<\/td\>\<td\>\<P class=sml_price2\>(.*)\..* руб.";
 		}
-		
+
 	}
-	
+
 	function checkNumber(val, default_val)
 	{
 		if (isNaN(val)) val = default_val;
 		return val;
 	}
-	
+
 	function checkString(val, default_val)
 	{
 		if (val == "") val = default_val;
 		return val;
 	}
-	
+
 	function readSettings()
 	{
 		LOGIN			= checkString(System.Gadget.Settings.readString("bn_login_str"), "");
 		PASSWD			= checkString(System.Gadget.Settings.readString("bn_passwd_str"), "");
 		UPDATE_TIME		= checkNumber(parseInt(System.Gadget.Settings.readString("bn_update_str")), 3600);
 		NET				= checkString(System.Gadget.Settings.readString("bn_net_str"), "idom");
-		MINIMAL_BALANCE = checkNumber(parseInt(System.Gadget.Settings.readString("bn_minsum_str")), 110000);
-		
+		min_sum = System.Gadget.Settings.readString("bn_minsum_str").replace(",", ".")
+		MINIMAL_BALANCE = checkNumber(parseFloat(min_sum), MINIMAL_BALANCE);
+
 		applyNetSettings();
 	}
-	
-	function getBalance() 
+
+	function getBalance()
 	{
 		var poststr = net_settings.login + "=" + encodeURI(LOGIN) + "&" + net_settings.passwd + "=" + encodeURI(PASSWD);
 		makePOSTRequest(net_settings.url, poststr);
 	}
-	
+
 	function delayedCallToIdom()
 	{
 		clearInterval(call_interval);
 		getBalance();
 	}
-	
-	function settingsClosed(event) 
+
+	function settingsClosed(event)
 	{
-		if ( event.closeAction == event.Action.commit ) 
+		if ( event.closeAction == event.Action.commit )
 		{
 			init();
 		}
 	}
 
-	
+
 	function init()
 	{
 		clearInterval(call_interval);
-		
+
 		System.Gadget.settingsUI = "settings.html";
-		System.Gadget.onSettingsClosed = settingsClosed; 
-		
+		System.Gadget.onSettingsClosed = settingsClosed;
+
 		readSettings();
-		
+
 		showConnectionStatus();
 		call_interval = setInterval("delayedCallToIdom()", 1000);
-		
+
 	}
-   
+
 </script>
 
 </head>

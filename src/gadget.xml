@@ -3,19 +3,19 @@
 
 <name>My Balance</name>
 
-<version>0.1</version>
+<version>0.3</version>
 
-<author name="Pavel Liber">
+<author name="Pavel Liber, Denis Dmitriev">
 <info url="" />
 <logo src="img/bn_ico.png" />
 </author>
 
-<copyright>&#169; 2009</copyright>
+<copyright>&#169; 2009-2017</copyright>
 
 <description>
-Balance Checker for Idom and SML Night
+Balance Checker for iDom and SML Night
 </description>
-	
+
 <icons>
 <icon src="img/bn_ico.png" width="64" height="64" />
 </icons>
